@@ -1,0 +1,36 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+header {
+    background-color: lightgray;
+    margin-bottom: 10vh;
+    text-align: center;
+    padding: 10px;
+}
+#container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.post-block {
+    width: 60%;
+    margin: 0 auto;
+    background-color: lightgray;
+    padding: 10px;
+    margin-bottom: 10vh;
+}
+.post-image {
+    width: 100%;
+}
+.post-footer {
+    display: flex;
+    justify-content: space-between;
+}
+.post-meta,
+.post-score {
+    font-size: 75%;
+}
+.post-score {
+    text-align: right;
+}
