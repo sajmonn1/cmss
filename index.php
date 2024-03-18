@@ -8,45 +8,59 @@
 </head>
 <body>
     <header>
-        <h1>breaddit</h1>
+        <h1>cmss</h1>
     </header>
     <div id="mid">
         <?php
-        $db = new mysqli('localhost', 'root', '', 'breaddit');
-        $q = $db->prepare("Select post.id, post.image, post.title, post.timestamp, user.email
+        // Establishing a database connection
+        $db = new mysqli('localhost', 'root', '', 'cmss');
+        
+        // Check if the connection was successful
+        if ($db->connect_errno) {
+            echo "Failed to connect to MySQL: " . $db->connect_error;
+            exit();
+        }
+
+        // Prepare and execute the SQL query
+        $q = $db->prepare("SELECT post.id, post.title, post.content, post.timestamp, user.email
         FROM post
-        INNER JOIN user ON post.author = user.ID");
-        $q->execute();
+        INNER JOIN user ON post.author_id = user.id");
+
+        // Check if the query preparation was successful
+        if (!$q) {
+            echo "Error preparing query: " . $db->error;
+            exit();
+        }
+
+        // Execute the query
+        $result = $q->execute();
+
+        // Check if the query execution was successful
+        if (!$result) {
+            echo "Error executing query: " . $db->error;
+            exit();
+        }
+
+        // Get the result set
         $result = $q->get_result();
-        while($row = $result->fetch_assoc()) {
+
+        // Loop through the result set and display posts
+        while ($row = $result->fetch_assoc()) {
             echo '<div class="post">';
-            echo '<h2 class="posttitle">'.$row['title'].'</h2>';
-            echo '<h3 class="postauthor">'.$row['email'].'</h3>';
-            echo '<img src="'.$row['image'].'" alt="obrazekposta" class=postimage>';
-            echo '<p class=postdesc>Post Description </p>';
-            echo '<div class="postfooter">
-            <span class="postmeta">'.$row['timestamp'].'</span>
-            <span class="postscore">POINTS</span>
-                </div>';
-
-
+            echo '<h2 class="posttitle">' . $row['title'] . '</h2>';
+            echo '<h3 class="postauthor">' . $row['email'] . '</h3>';
+            echo '<p class="postcontent">' . $row['content'] . '</p>';
+            echo '<div class="postfooter">';
+            echo '<span class="postmeta">' . $row['timestamp'] . '</span>';
+            echo '<span class="postscore">POINTS</span>';
+            echo '</div>';
             echo '</div>';
         }
+
+        // Close the prepared statement and database connection
+        $q->close();
+        $db->close();
         ?>
-
-
-        <!--<div class="post">
-            <h3 class="posttitle">Title</h3>
-            <h6 class="postauthor">Author</h6>
-            <img src="https://picsum.photos/800/600" alt="" class="postimage">
-            <p class="postdesc">Post Description</p>
-            <div class="postfooter">
-                <span class="postmeta">Date and time</span>
-                <span class="postscore">+ / -</span>
-            </div>
-        </div>
-        </div>
-    -->
     </div>
 </body>
 </html>

@@ -1,50 +1,97 @@
 <?php
-$db = new mysqli("localhost", "root", "", "breaddit");
-
-if ($db->connect_error) {
-    die("Connection failed: " . $db->connect_error);
-}
-
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == "register") {
-    $username = $_REQUEST['username'];
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == "login") {
     $email = $_REQUEST['email'];
     $password = $_REQUEST['password'];
 
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
-    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    $db = new mysqli("localhost", "root", "", "cmss");
 
-    $q = $db->prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?)");
-    $q->bind_param("sss", $username, $email, $passwordHash);
-    $result = $q->execute();
+    $q = $db->prepare("SELECT * FROM user WHERE email = ? LIMIT 1");
+    $q->bind_param("s", $email);
+    $q->execute();
+    $result = $q->get_result();
 
-    if ($result) {
-        echo "Account created successfully"; 
+    $userRow = $result->fetch_assoc();
+    if ($userRow == null) {
+        // Log login attempt
+        $log = fopen("logs.txt", "a");
+        fwrite($log, date("Y-m-d H:i:s") . " - Failed login attempt for email: $email\n");
+        fclose($log);
+
+        echo "Błędny login lub hasło <br>";
     } else {
-        echo "Something went wrong!";
+        if (password_verify($password, $userRow['passwordHash'])) {
+            // Log successful login
+            $log = fopen("logs.txt", "a");
+            fwrite($log, date("Y-m-d H:i:s") . " - Successful login for email: $email\n");
+            fclose($log);
+
+            echo "Zalogowano poprawnie <br>";
+        } else {
+            // Log failed login attempt
+            $log = fopen("logs.txt", "a");
+            fwrite($log, date("Y-m-d H:i:s") . " - Failed login attempt for email: $email\n");
+            fclose($log);
+
+            echo "Błędny login lub hasło <br>";
+        }
     }
 }
 
-$q = $db->prepare("SELECT post.id, post.title, post.content, user.username FROM post INNER JOIN user ON post.author_id = user.id");
-$q->execute();
-$result = $q->get_result();
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == "register") {
+    $db = new mysqli("localhost", "root", "", "cmss");
+    $email = $_REQUEST['email'];
+    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
-while ($row = $result->fetch_assoc()) {
-    echo "ID: " . $row['id'] . ", Title: " . $row['title'] . ", Content: " . $row['content'] . ", Author: " . $row['username'] . "<br>";
+    $password = $_REQUEST['password'];
+    $passwordRepeat = $_REQUEST['passwordRepeat'];
+
+    if($password == $passwordRepeat) {
+        $q = $db->prepare("INSERT INTO user (email, passwordHash) VALUES (?, ?)");
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $q->bind_param("ss", $email, $passwordHash);
+        $result = $q->execute();
+        if($result) {
+            // Log successful registration
+            $log = fopen("logs.txt", "a");
+            fwrite($log, date("Y-m-d H:i:s") . " - New account registered for email: $email\n");
+            fclose($log);
+
+            echo "Konto utworzono poprawnie"; 
+        } else {
+            // Log failed registration attempt
+            $log = fopen("logs.txt", "a");
+            fwrite($log, date("Y-m-d H:i:s") . " - Failed registration attempt for email: $email\n");
+            fclose($log);
+
+            echo "Coś poszło nie tak!";
+        }
+    } else {
+        echo "Hasła nie są zgodne - spróbuj ponownie!";
+    }
 }
 
-$q->close();
-$db->close();
 ?>
 
-<h1>Register</h1>
+<h1>Zaloguj się</h1>
 <form action="index.php" method="post">
-    <label for="usernameInput">Username:</label>
-    <input type="text" name="username" id="usernameInput">
     <label for="emailInput">Email:</label>
     <input type="email" name="email" id="emailInput">
-    <label for="passwordInput">Password:</label>
+    <label for="passwordInput">Hasło:</label>
     <input type="password" name="password" id="passwordInput">
+    <input type="hidden" name="action" value="login">
+    <input type="submit" value="Zaloguj">
+</form>
+
+<h1>Zarejestruj się</h1>
+<form action="index.php" method="post">
+    <label for="emailInput">Email:</label>
+    <input type="email" name="email" id="emailInput">
+    <label for="passwordInput">Hasło:</label>
+    <input type="password" name="password" id="passwordInput">
+    <label for="passwordRepeatInput">Hasło ponownie:</label>
+    <input type="password" name="passwordRepeat" id="passwordRepeatInput">
     <input type="hidden" name="action" value="register">
-    <input type="submit" value="Register">
+    <input type="submit" value="Zarejestruj">
 </form>
