@@ -8,12 +8,12 @@
 </head>
 <body>
     <header>
-        <h1>cmss</h1>
+        <h1>cms</h1>
     </header>
     <div id="mid">
         <?php
         // Establishing a database connection
-        $db = new mysqli('localhost', 'root', '', 'cmss');
+        $db = new mysqli('localhost', 'root', '', 'cms');
         
         // Check if the connection was successful
         if ($db->connect_errno) {
