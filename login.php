@@ -1,3 +1,10 @@
+<?php
+//włącz obsługę sesji w tym pliku
+session_start();
+//zaimportuj definicję klasy
+//require wymaga zaimportowania - wykrzaczy skrypt jeśli nie uda się zaimportować
+require("./class/User.class.php");
+?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -12,7 +19,24 @@
     <div class="container">
     <?php if(isset($_REQUEST['submit'])) : ?>
         <!-- Jeśli został wysłany formularz to... -->
-        
+        <?php
+        $result = User::Login($_REQUEST['email'], $_REQUEST['password']);
+        ?>
+    <div class="row mt-5">
+            <div class="col-6 offset-3">
+                <h1 class="text-center">
+                    <?php 
+                        if($result)
+                            echo "Udało się zalogować";
+                        else
+                            echo "Nie udało się zalogować";
+                    ?>
+                </h1>
+                <div class="text-center">
+                <a href="index.php">Powrót do strony</a>
+                </div>
+            </div>
+        </div>
     <?php else : ?>
         <!-- Jeśli nie został jeszcze wysłany formularz to... -->
         <div class="row mt-5">
@@ -23,7 +47,7 @@
                     <input class="form-control mb-1" type="email" id="emailInput" name="email" required>
                     <label class="form-label mt-3" for="passwordInput">Hasło:</label>
                     <input class="form-control mb-1" type="password" id="passwordInput" name="password" required>
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Zaloguj</button>
+                    <button type="submit" class="btn btn-primary w-100 mt-3" name="submit">Zaloguj</button>
                 </form>
             </div>
         </div>

@@ -39,7 +39,7 @@ class User {
         $result = $q->get_result();
         $row = $result->fetch_assoc();
         //tu muszą się nazwy w nawiasach [] zgadzać z nazwą kolumny w bazie danych
-        $id = $row['id'];
+        $id = $row['ID'];
         $passwordHash = $row['password'];
         if(password_verify($password, $passwordHash)) {
             //hasło się zgadza
