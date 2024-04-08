@@ -1,90 +1,37 @@
-<?php
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == "login") {
-    $login = $_REQUEST['login'];
-    $password = $_REQUEST['password'];
-
-    $login = filter_var($login, FILTER_SANITIZE_EMAIL);
-
-    $db = new mysqli("localhost", "root", "", "cms");
-    if ($db->connect_errno) {
-        echo "Błąd podczas łączenia z bazą danych: " . $db->connect_error;
-        exit();
-    }
-
-    $q = $db->prepare("SELECT * FROM user WHERE Login = ? LIMIT 1");
-    if (!$q) {
-        echo "Błąd przygotowywania zapytania SQL: " . $db->error;
-        exit();
-    }
-
-    $q->bind_param("s", $login);
-    $q->execute();
-    $result = $q->get_result();
-
-    $userRow = $result->fetch_assoc();
-
-    if ($userRow == null) {
-        echo "Błędny login lub hasło <br>";
-    } else {
-        if (password_verify($password, $userRow["password"])) {
-            echo "Zalogowano poprawnie <br>";
-        } else {
-            echo "Błędny login lub hasło <br>";
-        }
-    }
-}
-
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == "register" && isset($_REQUEST['login']) && isset($_REQUEST['password']) && isset($_REQUEST['passwordRepeat'])) {
-    $db = new mysqli("localhost", "root", "", "cms");
-    if ($db->connect_errno) {
-        echo "Błąd podczas łączenia z bazą danych: " . $db->connect_error;
-        exit();
-    }
-
-    $login = $_REQUEST['login'];
-    $login = filter_var($login, FILTER_SANITIZE_EMAIL);
-
-    $password = $_REQUEST['password'];
-    $passwordRepeat = $_REQUEST['passwordRepeat'];
-
-    if ($password == $passwordRepeat) {
-        $q = $db->prepare("INSERT INTO user (Login, Password) VALUES (?, ?)");
-        if (!$q) {
-            echo "Błąd przygotowywania zapytania SQL: " . $db->error;
-            exit();
-        }
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $q->bind_param("ss", $login, $passwordHash);
-        $result = $q->execute();
-
-        if ($result) {
-            echo "Konto utworzone poprawnie";
-        } else {
-            echo "Coś poszło nie tak";
-        }
-    } else {
-        echo "Hasła się nie zgadzają, spróbuj ponownie.";
-    }
-}
-?>
-
-<form action="login.php" method="post">
-    <label for="login">Login: </label> <br>
-    <input type="text" name="login" id="login"><br>
-    <label for="password">Hasło: </label> <br>
-    <input type="password" name="password" id="password"> <br>
-    <input type="hidden" name="action" value="login">
-    <input type="submit" value="Zaloguj">
-</form>
-
-<h1>Rejestracja</h1>
-<form action="login.php" method="post">
-    <label for="login">Login: </label> <br>
-    <input type="text" name="login" id="login"><br>
-    <label for="password">Hasło: </label> <br>
-    <input type="password" name="password" id="password"> <br>
-    <label for="passwordRepeat">Powtórz hasło: </label> <br>
-    <input type="password" name="passwordRepeat" id="passwordRepeat"> <br>
-    <input type="hidden" name="action" value="register">
-    <input type="submit" value="Zarejestruj">
-</form>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie użytkownika</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+    <?php if(isset($_REQUEST['submit'])) : ?>
+        <!-- Jeśli został wysłany formularz to... -->
+        
+    <?php else : ?>
+        <!-- Jeśli nie został jeszcze wysłany formularz to... -->
+        <div class="row mt-5">
+            <div class="col-6 offset-3">
+                <h1 class="text-center">Logowanie użytkownika</h1>
+                <form action="login.php" method="post">
+                    <label class="form-label mt-3" for="emailInput">Adres e-mail:</label>
+                    <input class="form-control mb-1" type="email" id="emailInput" name="email" required>
+                    <label class="form-label mt-3" for="passwordInput">Hasło:</label>
+                    <input class="form-control mb-1" type="password" id="passwordInput" name="password" required>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Zaloguj</button>
+                </form>
+            </div>
+        </div>
+    <?php endif; ?>    
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous"></script>
+</body>
+</html>
