@@ -58,7 +58,7 @@ require("./class/User.class.php");
     </div>
     <script>
         function redirect() {
-            window.location.href = "http://localhost/cms/index.php";
+            window.location.href = "http://localhost/cmss/index.php";
         }
         setTimeout(redirect, 5000);
     </script>
