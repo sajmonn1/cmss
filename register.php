@@ -54,6 +54,9 @@ require("./class/User.class.php");
                     <input class="form-control mb-1" type="password" id="passwordInputRepeat" name="passwordRepeat" required>
                     <button type="submit" class="btn btn-primary w-100 mt-3" name="submit">Zarejestruj</button>
                 </form>
+                <a href="login.php">
+                    <button class="btn btn-primary w-100 mt-3" name="submit">Zaloguj się</button>
+                </a>
             </div>
         </div>
         <?php endif; ?>

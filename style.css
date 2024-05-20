@@ -4,33 +4,30 @@ body {
 }
 header {
     background-color: lightgray;
-    margin-bottom: 10vh;
     text-align: center;
     padding: 10px;
 }
-#container {
-    width: 80%;
-    margin: 0 auto;
-}
 
-.post-block {
-    width: 60%;
+
+div.post-block {
+    width: 50vw;
     margin: 0 auto;
     background-color: lightgray;
     padding: 10px;
     margin-bottom: 10vh;
 }
-.post-image {
+img.post-image {
     width: 100%;
 }
-.post-footer {
+div.post-footer {
     display: flex;
-    justify-content: space-between;
 }
-.post-meta,
-.post-score {
+span.post-meta,
+span.post-score {
+    display: block;
+    flex: 1;
     font-size: 75%;
 }
-.post-score {
+span.post-score {
     text-align: right;
 }

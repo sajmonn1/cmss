@@ -49,11 +49,19 @@ require("./class/User.class.php");
                     <input class="form-control mb-1" type="password" id="passwordInput" name="password" required>
                     <button type="submit" class="btn btn-primary w-100 mt-3" name="submit">Zaloguj</button>
                 </form>
+                <a href="register.php">
+                    <button class="btn btn-primary w-100 mt-3" name="submit">Zarejestruj się</button>
+                </a>
             </div>
         </div>
     <?php endif; ?>    
     </div>
-    
+    <script>
+        function redirect() {
+            window.location.href = "http://localhost/cms/index.php";
+        }
+        setTimeout(redirect, 5000);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
         crossorigin="anonymous"></script>
